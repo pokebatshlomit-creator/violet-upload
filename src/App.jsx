@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
-export default function VioletUploadPage() {
+export default function App() {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState("");
 
@@ -21,7 +19,7 @@ export default function VioletUploadPage() {
 
       const filePath = `${Date.now()}-${file.name}`;
 
-      const uploadResponse = await fetch(
+      const response = await fetch(
         `${SUPABASE_URL}/storage/v1/object/${BUCKET_NAME}/${filePath}`,
         {
           method: "POST",
@@ -35,7 +33,7 @@ export default function VioletUploadPage() {
         }
       );
 
-      if (!uploadResponse.ok) {
+      if (!response.ok) {
         throw new Error("Upload failed");
       }
 
@@ -47,45 +45,79 @@ export default function VioletUploadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-      <Card className="w-full max-w-xl rounded-2xl shadow-xl border border-zinc-800 bg-zinc-950">
-        <CardContent className="p-8 space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold">Violet Lesson Upload</h1>
-            <p className="text-sm text-zinc-400 mt-2">
-              Upload full lesson recordings here for large files that Telegram
-              cannot handle.
-            </p>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#000",
+        color: "#fff",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "24px",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "600px",
+          background: "#111",
+          border: "1px solid #333",
+          borderRadius: "16px",
+          padding: "32px",
+        }}
+      >
+        <h1>Violet Lesson Upload</h1>
+
+        <p style={{ color: "#aaa" }}>
+          Upload full lesson recordings here for large files that Telegram
+          cannot handle.
+        </p>
+
+        <input
+          type="file"
+          accept="audio/*"
+          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          style={{ marginTop: "20px", marginBottom: "20px" }}
+        />
+
+        <button
+          onClick={handleUpload}
+          style={{
+            width: "100%",
+            padding: "12px",
+            borderRadius: "10px",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          Upload Lesson
+        </button>
+
+        {status && (
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "12px",
+              border: "1px solid #333",
+              borderRadius: "10px",
+            }}
+          >
+            {status}
           </div>
+        )}
 
-          <div className="space-y-3">
-            <input
-              type="file"
-              accept="audio/*"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="block w-full text-sm"
-            />
-
-            <Button
-              onClick={handleUpload}
-              className="w-full rounded-xl"
-            >
-              Upload Lesson
-            </Button>
-          </div>
-
-          {status && (
-            <div className="text-sm text-zinc-300 border border-zinc-800 rounded-xl p-3">
-              {status}
-            </div>
-          )}
-
-          <p className="text-xs text-zinc-500">
-            After upload, Violet will process your lesson and return your
-            transcript + study summary in Telegram.
-          </p>
-        </CardContent>
-      </Card>
+        <p
+          style={{
+            marginTop: "20px",
+            fontSize: "14px",
+            color: "#888",
+          }}
+        >
+          After upload, Violet will process your lesson and return your
+          transcript + study summary in Telegram.
+        </p>
+      </div>
     </div>
   );
 }
