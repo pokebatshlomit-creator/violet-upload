@@ -33,14 +33,15 @@ export default function App() {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
-
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(errorText);
+      throw new Error(errorText);
+    }
       setStatus(`Upload successful: ${file.name}`);
     } catch (error) {
       console.error(error);
-      setStatus("Upload failed. Please try again.");
+      setStatus(`Upload failed: ${error.message}`);
     }
   };
 
